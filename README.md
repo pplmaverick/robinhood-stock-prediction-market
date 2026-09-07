@@ -47,6 +47,12 @@ A parimutuel stock prediction market built on Robinhood Chain Mainnet, using nat
   the same 89 real snapshots (`verification/decision/`). See
   [Honest Disclosure](#honest-disclosure-agentkit-relayer) and `docs/spec.md` for the momentum
   vs. mean-reversion signal-direction choice.
+- [x] Agent Decision Transparency page — `/agent-activity` (`AgentDecisionPanel` component,
+  backed by `frontend/api/agent-status.js`), a read-only visualization of the live agent decision
+  pipeline. Reuses `decision-engine/` and `relayer/` modules directly rather than reimplementing
+  any logic; never calls `placeBet()` or `placeAgentBet()`. This is currently the only place a
+  user can actually observe the pipeline described in
+  [Honest Disclosure](#honest-disclosure-agentkit-relayer) below, rather than just read about it.
 
 ## Core Features
 
@@ -86,6 +92,7 @@ that file before editing either one).*
 |----------|---------|
 | StockPredictionMarketV2 | [0x59DF30E22bdaC70764a5DbF8bBa51BC5a595759C](https://robinhoodchain.blockscout.com/address/0x59DF30E22bdaC70764a5DbF8bBa51BC5a595759C) |
 | StockPredictionMarket | [0x72DAb8B1B53b3CF028e9A0d1E21178981f264245](https://robinhoodchain.blockscout.com/address/0x72DAb8B1B53b3CF028e9A0d1E21178981f264245) — deprecated, no longer referenced by frontend or any new code |
+| AgentStockMarket | [0xE8b3916Ea16AD2F2C0910bB94005e30F5CC341D3](https://robinhoodchain.blockscout.com/address/0xE8b3916Ea16AD2F2C0910bB94005e30F5CC341D3) — deployed 2026-09-05, superseded one day later when ADR-10 merged its attestation-verification logic into `StockPredictionMarketV2.placeAgentBet()`; no longer referenced by any frontend, decision-engine, or relayer code |
 | TSLA ChainlinkPriceFeed | [0x072A3A0C04Cf8CDcaf5B4A73a4Ed4fF5A841531f](https://robinhoodchain.blockscout.com/address/0x072A3A0C04Cf8CDcaf5B4A73a4Ed4fF5A841531f) |
 | AMZN ChainlinkPriceFeed | [0xcAC5B9d2817325E78090E3Ce4b9C299C819cF953](https://robinhoodchain.blockscout.com/address/0xcAC5B9d2817325E78090E3Ce4b9C299C819cF953) |
 | PLTR ChainlinkPriceFeed | [0xBdC53E50b1167cE1199bFaD54A034f7ab1741051](https://robinhoodchain.blockscout.com/address/0xBdC53E50b1167cE1199bFaD54A034f7ab1741051) |
