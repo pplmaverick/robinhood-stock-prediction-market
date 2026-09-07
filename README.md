@@ -64,55 +64,10 @@ No order book, no counterparty risk. BULL and BEAR pools accumulate independentl
 
 ## Architecture
 
-```mermaid
-graph TD
-    User["👤 User"]
-    FE["Frontend\nReact + wagmi"]
-    Contract["StockPredictionMarketV2\n0x59DF30E2..."]
-    Oracle["Chainlink Price Feed\nTSLA/AMZN/PLTR/AMD/NVDA"]
-    Owner["👤 Owner/Keeper\n0xed2B5717...\ncreateMarket · lockMarket · settleMarket"]
-    Result["Settlement Result\nParimutuel · 2% fee"]
-    TIE["TIE*\nopenPrice == closePrice"]
-    Pool["bullPool / bearPool\nshared: human + agent bets"]
+![Architecture](docs/architecture.png)
 
-    Subgraph["Subgraph\nPriceRangeIndex\npercentileRank · trend"]
-    DecisionEngine["Decision Engine\nBULL · BEAR · NO_TRADE"]
-    Relayer["Relayer\nverify SIWE signature\nquery AgentBook\nsign attestation"]
-    AgentBook{"AgentBook · World Chain\nbacked · unbacked · unknown"}
-    Reject["No attestation issued\nunbacked or unknown"]
-    AgentWallet["Agent Wallet\nsigns & broadcasts own tx\nno relayer-paid gas"]
-
-    User -->|"placeBet()"| FE
-    FE --> Contract
-    User -->|"claimWinnings()"| Contract
-    Owner --> Contract
-    Contract --> Oracle
-    Oracle --> Contract
-    Contract -->|"close > open"| Result
-    Contract -->|"close < open"| Result
-    Contract --> TIE
-    TIE -->|"BULL default"| Result
-    Result -->|"payout"| User
-    Contract --> Pool
-
-    Oracle --> Subgraph
-    Subgraph --> DecisionEngine
-    DecisionEngine -->|"attestation request"| Relayer
-    Relayer --> AgentBook
-    AgentBook -->|"backed"| AgentWallet
-    AgentBook -->|"unbacked/unknown"| Reject
-    AgentWallet -->|"placeAgentBet()"| Contract
-
-    style Contract fill:#1a1a2e,color:#00ff88
-    style Oracle fill:#375bd2,color:#ffffff
-    style Result fill:#2d2d2d,color:#ffcc00
-    style TIE fill:#3d1a1a,color:#ff6666
-    style Pool fill:#2d2d2d,color:#ffcc00
-    style DecisionEngine fill:#1a2e2e,color:#66ffcc
-    style Relayer fill:#2e1a3d,color:#cc99ff
-    style AgentBook fill:#3d2e1a,color:#ffcc66
-    style Reject fill:#3d1a1a,color:#ff6666
-```
+*Source: `docs/architecture-source.html` (rendered via Puppeteer — see the comment at the top of
+that file before editing either one).*
 
 > *Known limitation, verified against `contracts/StockPredictionMarketV2.sol`: `openPrice` is
 > snapshotted inside `lockMarket()` at execution time (not saved earlier in `createMarket()`), so

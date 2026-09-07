@@ -1,0 +1,291 @@
+<!--
+  SOURCE FILE for docs/architecture.png.
+
+  This page is rendered headlessly (Puppeteer) and screenshotted to produce
+  docs/architecture.png, which is what README.md actually embeds.
+
+  IMPORTANT: if you edit this file, you MUST re-run the screenshot step to
+  regenerate docs/architecture.png. The two files are not linked by any build
+  step — nothing will warn you if they drift out of sync.
+
+  Design system reproduced (structure + box color variants only; the outer
+  chrome is adapted to a light GitHub-README background) from
+  ~/web3-portfolio/src/components/detail-diagram.tsx and
+  ~/web3-portfolio/src/lib/diagrams.ts (client=violet / onchain=emerald /
+  process=amber variant palette, pill-style detail lines, dashed-rule stage
+  labels, dark highlight callouts, notes with optional warn styling).
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background:#ffffff; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+</style>
+</head>
+<body class="bg-white">
+  <div class="mx-auto max-w-4xl p-8 bg-white">
+    <div class="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-5">
+
+      <div>
+        <h1 class="text-base font-semibold text-gray-900">Architecture</h1>
+        <p class="mt-1 text-[13px] text-gray-600">
+          Human bets and autonomous agent bets settle into the same
+          <code class="rounded bg-gray-100 px-1 py-0.5 text-gray-800">StockPredictionMarketV2</code>
+          contract and the same <code class="rounded bg-gray-100 px-1 py-0.5 text-gray-800">bullPool</code> /
+          <code class="rounded bg-gray-100 px-1 py-0.5 text-gray-800">bearPool</code>.
+        </p>
+      </div>
+
+      <!-- ================= SECTION 1: PLACE BET (HUMAN) ================= -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <span class="whitespace-nowrap font-mono text-[9.5px] tracking-wide text-gray-500 uppercase">PLACE BET (HUMAN)</span>
+          <span class="h-px flex-1 border-t border-dashed border-gray-300"></span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-violet-100 border-violet-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-violet-950">User</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-violet-700">👤 wallet-connected browser</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-violet-400/40 bg-white/50 text-violet-950">selects market + BULL/BEAR</div>
+              </div>
+            </div>
+
+            <div class="flex shrink-0 flex-col items-center justify-center gap-1 px-0.5 text-gray-400">
+              <span class="text-sm">→</span>
+            </div>
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-violet-100 border-violet-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-violet-950">Frontend</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-violet-700">React + wagmi</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-violet-400/40 bg-white/50 text-violet-950">sendTransaction()</div>
+              </div>
+            </div>
+
+            <div class="flex shrink-0 flex-col items-center justify-center gap-1 px-0.5 text-gray-400">
+              <span class="text-sm">→</span>
+              <span class="whitespace-nowrap rounded-full border border-gray-300 bg-white px-2 py-0.5 font-mono text-[9px] text-indigo-600">wagmi tx</span>
+            </div>
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-emerald-50 border-emerald-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-emerald-950">StockPredictionMarketV2</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-emerald-700">placeBet(marketId, direction)</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">msg.value &gt;= MIN_BET (0.001 ETH)</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">bets[marketId][sender] = Bet(amount, direction, false)</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">bullPool += amount &nbsp;or&nbsp; bearPool += amount</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SECTION 2: AGENT DECISION ================= -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <span class="whitespace-nowrap font-mono text-[9.5px] tracking-wide text-gray-500 uppercase">AGENT DECISION</span>
+          <span class="h-px flex-1 border-t border-dashed border-gray-300"></span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-amber-100 border-amber-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-amber-950">Subgraph</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-amber-800">PriceRangeIndex (rolling window)</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-amber-400/40 bg-white/50 text-amber-950">percentileRank</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-amber-400/40 bg-white/50 text-amber-950">movingAverage → trend</div>
+              </div>
+            </div>
+
+            <div class="flex shrink-0 flex-col items-center justify-center gap-1 px-0.5 text-gray-400">
+              <span class="text-sm">→</span>
+              <span class="whitespace-nowrap rounded-full border border-gray-300 bg-white px-2 py-0.5 font-mono text-[9px] text-indigo-600">GraphQL query</span>
+            </div>
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-amber-100 border-amber-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-amber-950">Decision Engine</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-amber-800">bet-decision.js</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-amber-400/40 bg-white/50 text-amber-950">HIGH + UP → BULL</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-amber-400/40 bg-white/50 text-amber-950">LOW + DOWN → BEAR</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-amber-400/40 bg-white/50 text-amber-950">else → NO_TRADE</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="rounded-md border border-dashed border-gray-300 px-2.5 py-1.5 text-[10px] leading-relaxed text-gray-500">
+          NO_TRADE decisions stop here — Stage 3 only runs for BULL/BEAR.
+        </div>
+      </div>
+
+      <!-- ================= SECTION 3: AGENTBOOK VERIFICATION ================= -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <span class="whitespace-nowrap font-mono text-[9.5px] tracking-wide text-gray-500 uppercase">AGENTBOOK VERIFICATION</span>
+          <span class="h-px flex-1 border-t border-dashed border-gray-300"></span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-amber-100 border-amber-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-amber-950">Relayer</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-amber-800">relayer.js: handleAgentRequest()</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-amber-400/40 bg-white/50 text-amber-950">1. verify SIWE signature</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-amber-400/40 bg-white/50 text-amber-950">2. lookupHuman() on AgentBook</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-amber-400/40 bg-white/50 text-amber-950">3. sign attestation</div>
+              </div>
+            </div>
+
+            <div class="flex shrink-0 flex-col items-center justify-center gap-1 px-0.5 text-gray-400">
+              <span class="text-sm">→</span>
+              <span class="whitespace-nowrap rounded-full border border-gray-300 bg-white px-2 py-0.5 font-mono text-[9px] text-indigo-600">lookupHuman()</span>
+            </div>
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-emerald-50 border-emerald-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-emerald-950">AgentBook · World Chain</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-emerald-700">lookupHuman(agentAddress)</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">backed → humanId returned</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">unbacked → humanId == 0</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">unknown → RPC failure</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="rounded-md border border-dashed border-amber-400 bg-amber-50 px-2.5 py-1.5 text-[10px] leading-relaxed text-amber-800">
+          Live agent wallet currently reads <code class="rounded bg-white/60 px-1 py-0.5 text-amber-900">unbacked</code>
+          (57/57 real on-chain reads confirmed — see
+          <code class="rounded bg-white/60 px-1 py-0.5 text-amber-900">prompts/08-world-id-orb-availability-constraint.md</code>).
+          The relayer returns <code class="rounded bg-white/60 px-1 py-0.5 text-amber-900">agent_not_human_backed</code>
+          and never signs an attestation for it today.
+        </div>
+      </div>
+
+      <!-- ================= SECTION 4: AGENT BET ================= -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <span class="whitespace-nowrap font-mono text-[9.5px] tracking-wide text-gray-500 uppercase">AGENT BET</span>
+          <span class="h-px flex-1 border-t border-dashed border-gray-300"></span>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-emerald-50 border-emerald-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-emerald-950">Agent Wallet</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-emerald-700">agent-tx.js</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">signs &amp; broadcasts its own tx</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">pays its own gas — relayer never funds or broadcasts</div>
+              </div>
+            </div>
+
+            <div class="flex shrink-0 flex-col items-center justify-center gap-1 px-0.5 text-gray-400">
+              <span class="text-sm">→</span>
+              <span class="whitespace-nowrap rounded-full border border-gray-300 bg-white px-2 py-0.5 font-mono text-[9px] text-indigo-600">placeAgentBet()</span>
+            </div>
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-emerald-50 border-emerald-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-emerald-950">StockPredictionMarketV2</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-emerald-700">placeAgentBet()</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">ecrecover(hash, v, r, s) == relayerAddress</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">bullPool / bearPool += amount (shared with human bets)</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="rounded-md border border-dashed border-amber-400 bg-amber-50 px-2.5 py-1.5 text-[10px] leading-relaxed text-amber-800">
+          <code class="rounded bg-white/60 px-1 py-0.5 text-amber-900">submitPlaceAgentBet()</code> exists and is tested,
+          but by its own code comment is only meant to be wired up behind an explicit human confirmation step —
+          nothing broadcasts it automatically today.
+        </div>
+      </div>
+
+      <!-- ================= SECTION 5: SETTLEMENT ================= -->
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-2">
+          <span class="whitespace-nowrap font-mono text-[9.5px] tracking-wide text-gray-500 uppercase">SETTLEMENT</span>
+          <span class="h-px flex-1 border-t border-dashed border-gray-300"></span>
+        </div>
+        <div class="flex flex-col gap-2">
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-violet-100 border-violet-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-violet-950">👤 Owner/Keeper</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-violet-700">0xed2B5717...</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-violet-400/40 bg-white/50 text-violet-950">lockMarket(marketId)</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-violet-400/40 bg-white/50 text-violet-950">settleMarket(marketId)</div>
+              </div>
+            </div>
+
+            <div class="flex shrink-0 flex-col items-center justify-center gap-1 px-0.5 text-gray-400">
+              <span class="text-sm">→</span>
+              <span class="whitespace-nowrap rounded-full border border-gray-300 bg-white px-2 py-0.5 font-mono text-[9px] text-indigo-600">reads price</span>
+            </div>
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-emerald-50 border-emerald-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-emerald-950">Chainlink Price Feed</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-emerald-700">latestRoundData()</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">openPrice ← read in lockMarket()</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">closePrice ← read in settleMarket()</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-emerald-50 border-emerald-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-emerald-950">TIE check</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-emerald-700">closePrice &gt;= openPrice</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">true → BULL wins</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">false → BEAR wins</div>
+              </div>
+              <div class="mt-1.5 rounded bg-emerald-950 px-1.5 py-1 font-mono text-[9.5px] leading-snug text-emerald-300">
+                openPrice == closePrice also resolves BULL — there is no REFUND state
+              </div>
+            </div>
+
+            <div class="flex shrink-0 flex-col items-center justify-center gap-1 px-0.5 text-gray-400">
+              <span class="text-sm">→</span>
+              <span class="whitespace-nowrap rounded-full border border-gray-300 bg-white px-2 py-0.5 font-mono text-[9px] text-indigo-600">compare</span>
+            </div>
+
+            <div class="min-w-[11rem] flex-1 rounded-lg border p-2.5 bg-emerald-50 border-emerald-300/50">
+              <p class="text-[11px] font-semibold leading-tight text-emerald-950">Settlement Result</p>
+              <p class="mt-0.5 font-mono text-[9.5px] leading-tight text-emerald-700">parimutuel payout</p>
+              <div class="mt-1.5 flex flex-col gap-1">
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">fee = 2% of total pool</div>
+                <div class="rounded border px-1.5 py-1 font-mono text-[9.5px] leading-snug border-emerald-400/40 bg-white/50 text-emerald-950">claimWinnings() pays the winning side</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ================= BADGES ================= -->
+      <div class="flex flex-wrap gap-1.5 border-t border-gray-200 pt-3">
+        <span class="rounded-full border border-gray-300 bg-gray-50 px-2.5 py-1 font-mono text-[9.5px] text-gray-600">Solidity ^0.8.20</span>
+        <span class="rounded-full border border-gray-300 bg-gray-50 px-2.5 py-1 font-mono text-[9.5px] text-gray-600">Chainlink Data Feeds</span>
+        <span class="rounded-full border border-gray-300 bg-gray-50 px-2.5 py-1 font-mono text-[9.5px] text-gray-600">World AgentKit relayer</span>
+        <span class="rounded-full bg-emerald-900 px-2.5 py-1 font-mono text-[9.5px] text-white">Mainnet ✓</span>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
