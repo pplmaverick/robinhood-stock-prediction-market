@@ -16,7 +16,8 @@ A parimutuel stock prediction market built on Robinhood Chain Mainnet, using nat
 - **Parimutuel prediction market contract** — live on Robinhood Chain Mainnet
   (Chain ID 4663) since July 3, 2026 (`b7b2071`, `d45fb8e`). Real on-chain
   history to date: 29 `createMarket`, 27 `lockMarket`, 27 `settleMarket`,
-  3 `placeBet`, 1 `claimWinnings` (independently counted, `da13c80`).
+  3 `placeBet`, 2 `claimWinnings` (independently counted, `da13c80`; second
+  `claimWinnings` on market 14 appeared on-chain 2026-09-08).
 - **React + wagmi frontend**, deployed to Vercel (`f40f9a1`, `0e2688d`,
   through subsequent fixes to `17c4ba9`).
 - **VPS-based keeper** for `lockMarket`/`settleMarket` operation (`664d535`,
@@ -24,8 +25,8 @@ A parimutuel stock prediction market built on Robinhood Chain Mainnet, using nat
 - **Independent settlement verification layer** (`da13c80`, added
   September 3, 2026 ahead of Continuity Track submission): a Python
   reference model derived from the contract's external spec/ABI, cross-checked
-  against all 27 real `settleMarket` transactions and the 1 real
-  `claimWinnings` transaction pulled directly from chain. 28/28 match; trace
+  against all 27 real `settleMarket` transactions and both real
+  `claimWinnings` transactions pulled directly from chain. 29/29 match; trace
   sealed via SHA-256 (`verification/settlement/commitments.sha256`).
   Findings: no decimals-normalization in the price-read path (dormant to
   date); README's claimed no-winner refund path has no implementation

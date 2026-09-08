@@ -14,6 +14,21 @@
       "pass": true,
       "symbol": "TSLA",
       "user": "0xed2B5717c9b936ecC76d75401026A99143e278F5"
+    },
+    {
+      "actualPayout": 980000000000000,
+      "bearPool": 0,
+      "betAmount": 1000000000000000,
+      "betDirection": 0,
+      "bullPool": 1000000000000000,
+      "claimTxHash": "d4a60dd01f4dc7c38cd4ea9a6444483d8f3c9d810d7f3c7c1173d5dceecf5d6a",
+      "closePrice": 20279625000,
+      "marketId": 14,
+      "modeledPayout": 980000000000000,
+      "openPrice": 20279625000,
+      "pass": true,
+      "symbol": "NVDA",
+      "user": "0x52905A5e83A83f6A9d0e64ad24E79A37512d35B9"
     }
   ],
   "settleMarket": [

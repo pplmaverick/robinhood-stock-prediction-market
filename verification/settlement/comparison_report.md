@@ -179,3 +179,18 @@ scenario has occurred yet.
 - `raw_data/` — raw pulled logs/transactions/decoded events/feed config, kept for auditability
 - `test_cases.json` — the 27 settleMarket + 1 claimWinnings real cases, model outputs, pass/fail
 - `commitments.sha256` — SHA-256 of `test_cases.json` as committed (`sha256sum verification/settlement/test_cases.json` to reproduce)
+
+---
+
+## Addendum (2026-09-08)
+
+At the time this report was generated (chain tip 53,125,658 on 2026-09-03),
+only 1 claimWinnings transaction (market 5) existed on-chain. A second
+claimWinnings transaction (market 14, tx
+`0xd4a60dd01f4dc7c38cd4ea9a6444483d8f3c9d810d7f3c7c1173d5dceecf5d6a`)
+occurred after this snapshot was taken. It has since been independently
+verified (actualPayout matches modeledPayout, pass: true) and added to
+test_cases.json (now 27/27 settleMarket + 2/2 claimWinnings). See
+`demo_display.py` for the current live verification output. This
+snapshot report's original figures above are left unchanged to preserve
+an accurate record of what was known at the time it was written.
