@@ -22,7 +22,7 @@ export default function Countdown({ closeTime }) {
   const fmt = (n) => String(n).padStart(2, '0')
 
   if (remaining === 0) {
-    return <span className="font-data-md text-secondary">CLOSED</span>
+    return <span className="font-data-md text-secondary">AWAITING LOCK</span>
   }
 
   return (
