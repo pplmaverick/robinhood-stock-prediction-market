@@ -63,3 +63,35 @@ overstating what has actually been verified. See the genesis-round decimals-anom
 disclosure (`docs/spec.md`) and the relayer's own "trusted-signer bridge, not
 trust-minimized" disclosure (root `README.md`, Honest Disclosure section) for the same
 pattern applied elsewhere in this project.
+
+## Update (2026-09-09): Sandbox access tested, still blocked
+
+World ID Sandbox access arrived via Firebase App Distribution email on
+2026-09-09. This section records what we found after testing it.
+
+The sandbox app's own verification flow asks for a passport scan, then
+asks the user to find a nearby physical Orb. There is no simulated or
+remote Orb path inside the app itself.
+
+Separately, we traced `npx @worldcoin/agentkit-cli register` back to
+its source (published npm package 0.2.0 and the `main` branch on
+GitHub). The `register` command hardcodes a production `app_id`
+(`app_a7c3e2b6b83927251a0db5345bd7146a`), not a staging one.
+`idkit-core` decides whether to route to a staging environment by
+checking if the `app_id` string contains `"staging"`. Since it
+doesn't, every QR code this CLI generates points to the real World
+App verification flow, regardless of which app scans it. The CLI's
+own `REGISTRATION.md` documents a `--network base-sepolia` flag that
+does not exist in the actual code, in either the published package
+or `main`.
+
+Both paths, the sandbox app's built-in flow and the CLI's
+registration flow, lead back to a physical Orb requirement. Neither
+provides a way to test the `backed` branch without one.
+
+This doesn't rule out that some other undocumented path exists. It
+only means we didn't find one after checking both entry points
+available to us in the time we had. We're leaving this constraint
+in place rather than closing it out, and the `backed` branch remains
+verified by code review and unit tests only, as stated in the main
+Honest Disclosure section.
