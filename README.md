@@ -31,7 +31,13 @@ A parimutuel stock prediction market built on Robinhood Chain Mainnet, using nat
   Findings: no decimals-normalization in the price-read path (dormant to
   date); README's claimed no-winner refund path has no implementation
   (never triggered); all real settlements to date resolved via
-  tie-defaults-to-BULL rather than genuine price movement. Full detail in
+  tie-defaults-to-BULL rather than genuine price movement. A follow-up check
+  (`1db88b1`) found genesis-era rounds on all 5 price feeds report answers
+  scaled at 18 decimals instead of the 8 `decimals()` reports — 222
+  anomalous rounds total, non-uniform cutoffs per feed, confirmed one level
+  below the proxy via `.aggregator()`. To our knowledge this is undocumented
+  elsewhere. No real settlement has touched an anomalous round to date
+  (~9.9-day buffer). Full detail in
   `verification/settlement/comparison_report.md`.
 
 ### New (this hackathon — Continuity Track)
