@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 
-// StockPredictionMarket（Robinhood Chain Mainnet, chainId 4663）
-const MARKET_CONTRACT = "0x72DAb8B1B53b3CF028e9A0d1E21178981f264245";
+// StockPredictionMarketV2（Robinhood Chain Mainnet, chainId 4663）
+const MARKET_CONTRACT = "0x59DF30E22bdaC70764a5DbF8bBa51BC5a595759C";
 
 const DURATION = 1209600n; // 14 days
 
